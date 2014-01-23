@@ -25,6 +25,7 @@ UITableViewDelegate
 @property (strong, nonatomic) IBOutlet JDFlipImageView *nextView;
 
 @property (strong, nonatomic) UIViewController *nextViewController;
+@property (weak, nonatomic) IBOutlet UITableView *menu;
 
 @property (strong, nonatomic) UIView *blackView;
 
@@ -55,7 +56,6 @@ UITableViewDelegate
     [self addChildViewController: self.currentViewController ];
     [self.detailView addSubview: self.currentViewController.view];
     [self.currentViewController didMoveToParentViewController:self];
-    self.blackView = [self blackView];
 }
 
 //This function performs tha exchange between the CURRENT and the NEXT view
@@ -70,9 +70,8 @@ UITableViewDelegate
     [currentView addGestureRecognizer:tap];
     currentView.userInteractionEnabled = YES;
 
-    //4b. Build a view with black bg and attach here the just taken screenshot 
-    UIView *blackView = self.blackView;
-    [blackView addSubview:currentView];
+    //4b. Build a view with black bg and attach here the just taken screenshot
+    [self.view addSubview:currentView];
 
     CGRect oldFrame = [currentView.layer frame];
     currentView.layer.anchorPoint = CGPointMake(0,0.5);
@@ -86,10 +85,8 @@ UITableViewDelegate
     //6. Add the new view to the detail view
     [self.detailView addSubview:viewController.view];
 
-    [self.view addSubview:blackView];
-
 #pragma mark - Far away
-    [UIView animateWithDuration:1.0
+    [UIView animateWithDuration:.6
      
     animations:^{
         CATransform3D t = CATransform3DIdentity;
@@ -98,6 +95,8 @@ UITableViewDelegate
         t = CATransform3DTranslate(t, viewController.view.frame.size.width * 1.8f, 0.0f, -400.0);
         currentView.layer.transform = t;
         currentView.layer.opacity = 1;
+        self.menu.alpha = 1;
+        self.menu.transform = CGAffineTransformMakeTranslation(10, 0);
     }
     completion:^(BOOL finished) {
     }];
@@ -107,7 +106,8 @@ UITableViewDelegate
 {
     JDFlipImageView *imageView = (JDFlipImageView *)recognizer.view;
     [[imageView superview] bringSubviewToFront:imageView];
-    [UIView animateWithDuration:1.0
+
+    [UIView animateWithDuration:.6
 
                      animations:^{
                          CATransform3D t = CATransform3DIdentity;
@@ -115,9 +115,11 @@ UITableViewDelegate
                          t = CATransform3DTranslate(t, 0, 0.0f, 0);
                          imageView.layer.transform = t;
                          imageView.layer.opacity = 1;
+
+                         self.menu.alpha = 0;
                      }
                      completion:^(BOOL finished) {
-                         [[imageView superview] removeFromSuperview];
+                         [imageView removeFromSuperview];
                          [self.currentViewController.view setHidden:NO];
                      }];
 }
@@ -141,7 +143,20 @@ UITableViewDelegate
     table.backgroundColor = [UIColor clearColor];
     table.showsVerticalScrollIndicator = NO;
 
+    self.menu = table;
+
     return bgView;
+}
+
+- (UITableView *)getMenuView
+{
+    for (UITableView *view in self.blackView.subviews) {
+        if ([view isKindOfClass:[UITableView class]]) {
+            return view;
+        }
+    }
+
+    return nil;
 }
 
 
@@ -164,12 +179,12 @@ double radianFromDegree(float degrees) {
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 4;
+    return 6;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 10;
+    return 4;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -185,6 +200,12 @@ double radianFromDegree(float degrees) {
     }
 
     cell.textLabel.text = [NSString stringWithFormat:@"Menu number %d", indexPath.row];
+    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:20.0f];
+
+    if (indexPath.row == 3) {
+        cell.textLabel.text = @"";
+    }
+
     cell.textLabel.textColor = [UIColor whiteColor];
     cell.contentView.backgroundColor = [UIColor clearColor];
     cell.backgroundColor = [UIColor clearColor];

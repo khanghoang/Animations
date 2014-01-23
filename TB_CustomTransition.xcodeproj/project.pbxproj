@@ -36,6 +36,8 @@
 		B4AFE4741891622300A0E980 /* JDFlipNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = B4AFE46A1891622300A0E980 /* JDFlipNumberView.m */; };
 		B4AFE4751891622300A0E980 /* JDFlipNumberViewImageFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B4AFE46C1891622300A0E980 /* JDFlipNumberViewImageFactory.m */; };
 		B4AFE4761891622300A0E980 /* UIView+JDFlipImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = B4AFE46E1891622300A0E980 /* UIView+JDFlipImageView.m */; };
+		B4D0088B1891A2DE007C56E1 /* menu-bg.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B4D0088A1891A2DE007C56E1 /* menu-bg.jpg */; };
+		B4D0088F1891A754007C56E1 /* BichPhuong.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B4D0088E1891A754007C56E1 /* BichPhuong.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +84,8 @@
 		B4AFE46C1891622300A0E980 /* JDFlipNumberViewImageFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JDFlipNumberViewImageFactory.m; sourceTree = "<group>"; };
 		B4AFE46D1891622300A0E980 /* UIView+JDFlipImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+JDFlipImageView.h"; sourceTree = "<group>"; };
 		B4AFE46E1891622300A0E980 /* UIView+JDFlipImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+JDFlipImageView.m"; sourceTree = "<group>"; };
+		B4D0088A1891A2DE007C56E1 /* menu-bg.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "menu-bg.jpg"; sourceTree = "<group>"; };
+		B4D0088E1891A754007C56E1 /* BichPhuong.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = BichPhuong.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +111,8 @@
 				A51DEC7F17A80EC0004AD02C /* background_s2.jpg */,
 				A558905917A71EFA00C2F7CA /* btn_transition.png */,
 				A558905A17A71EFA00C2F7CA /* thinkandbuild.png */,
+				B4D0088A1891A2DE007C56E1 /* menu-bg.jpg */,
+				B4D0088E1891A754007C56E1 /* BichPhuong.jpg */,
 			);
 			name = Assets;
 			sourceTree = "<group>";
@@ -249,7 +255,9 @@
 			files = (
 				A5E4C89817A5B7B9004B811D /* InfoPlist.strings in Resources */,
 				A5E4C8A017A5B7B9004B811D /* Default.png in Resources */,
+				B4D0088F1891A754007C56E1 /* BichPhuong.jpg in Resources */,
 				A5E4C8A217A5B7B9004B811D /* Default@2x.png in Resources */,
+				B4D0088B1891A2DE007C56E1 /* menu-bg.jpg in Resources */,
 				A5E4C8A417A5B7B9004B811D /* Default-568h@2x.png in Resources */,
 				A5E4C8AE17A5B7D3004B811D /* ContainerViewController.xib in Resources */,
 				A558905B17A71EFA00C2F7CA /* btn_transition.png in Resources */,
