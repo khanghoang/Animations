@@ -74,7 +74,7 @@ UITableViewDelegate
     [self.view addSubview:currentView];
 
     CGRect oldFrame = [currentView.layer frame];
-    currentView.layer.anchorPoint = CGPointMake(0,0.5);
+    currentView.layer.anchorPoint = CGPointMake(0.5,0.5);
     currentView.layer.frame = oldFrame;
 
     self.currentView = currentView;
@@ -91,12 +91,12 @@ UITableViewDelegate
     animations:^{
         CATransform3D t = CATransform3DIdentity;
         t.m34 = 1.0/ -250;
-        t = CATransform3DRotate(t, radianFromDegree(-10.0f), 0.0f, 1.0f, 0.0f);
-        t = CATransform3DTranslate(t, viewController.view.frame.size.width * 1.8f, 0.0f, -400.0);
+        t = CATransform3DRotate(t, radianFromDegree(-35.0f), 0.0f, 1.0f, 0.0f);
+        t = CATransform3DTranslate(t, viewController.view.frame.size.width * 0.7f, 0.0f, -250.0);
         currentView.layer.transform = t;
         currentView.layer.opacity = 1;
         self.menu.alpha = 1;
-        self.menu.transform = CGAffineTransformMakeTranslation(10, 0);
+        self.menu.transform = CGAffineTransformMakeTranslation(20, 0);
     }
     completion:^(BOOL finished) {
     }];
@@ -105,6 +105,7 @@ UITableViewDelegate
 - (IBAction)taptaptap:(UITapGestureRecognizer *)recognizer
 {
     JDFlipImageView *imageView = (JDFlipImageView *)recognizer.view;
+    imageView.layer.shouldRasterize = YES;
     [[imageView superview] bringSubviewToFront:imageView];
 
     [UIView animateWithDuration:.6
@@ -117,6 +118,7 @@ UITableViewDelegate
                          imageView.layer.opacity = 1;
 
                          self.menu.alpha = 0;
+                         self.menu.transform = CGAffineTransformMakeTranslation(-20, 0);
                      }
                      completion:^(BOOL finished) {
                          [imageView removeFromSuperview];
