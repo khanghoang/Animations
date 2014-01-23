@@ -44,6 +44,6 @@
     StepTWOViewController *stepTWOViewController = [[StepTWOViewController alloc] init];
     ContainerViewController *containerController = (ContainerViewController*) self.parentViewController;
     
-    [containerController presentViewController:stepTWOViewController];
+    [containerController presentViewController:self];
 }
 @end
