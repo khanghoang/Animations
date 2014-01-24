@@ -29,6 +29,9 @@ UITableViewDelegate
 
 @property (strong, nonatomic) UIView *blackView;
 
+@property (assign, nonatomic) CGFloat percent;
+@property (assign, nonatomic) CATransform3D endAnimation;
+
 @end
 
 @implementation ContainerViewController
@@ -53,6 +56,9 @@ UITableViewDelegate
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    self.percent = 0;
+
     [self addChildViewController: self.currentViewController ];
     [self.detailView addSubview: self.currentViewController.view];
     [self.currentViewController didMoveToParentViewController:self];
@@ -85,6 +91,8 @@ UITableViewDelegate
     //6. Add the new view to the detail view
     [self.detailView addSubview:viewController.view];
 
+    CGFloat percent = 0.8;
+
 #pragma mark - Far away
     [UIView animateWithDuration:.6
      
@@ -92,11 +100,12 @@ UITableViewDelegate
         CATransform3D t = CATransform3DIdentity;
         t.m34 = 1.0/ -250;
         t = CATransform3DRotate(t, radianFromDegree(-35.0f), 0.0f, 1.0f, 0.0f);
-        t = CATransform3DTranslate(t, viewController.view.frame.size.width * 0.7f, 0.0f, -250.0);
+        t = CATransform3DTranslate(t, viewController.view.frame.size.width * 0.7f * percent, 0.0f, -250.0 * percent);
         currentView.layer.transform = t;
         currentView.layer.opacity = 1;
         self.menu.alpha = 1;
         self.menu.transform = CGAffineTransformMakeTranslation(20, 0);
+        self.endAnimation = t;
     }
     completion:^(BOOL finished) {
     }];
@@ -104,26 +113,38 @@ UITableViewDelegate
 
 - (IBAction)taptaptap:(UITapGestureRecognizer *)recognizer
 {
+    self.percent += 0.25;
+    if (self.percent > 1.0f) {
+        self.percent = 1.0f;
+    }
+
     JDFlipImageView *imageView = (JDFlipImageView *)recognizer.view;
+
     imageView.layer.shouldRasterize = YES;
     [[imageView superview] bringSubviewToFront:imageView];
 
     [UIView animateWithDuration:.6
 
                      animations:^{
-                         CATransform3D t = CATransform3DIdentity;
-                         t = CATransform3DRotate(t, radianFromDegree(0.0f), 0.0f, 1.0f, 0.0f);
-                         t = CATransform3DTranslate(t, 0, 0.0f, 0);
+                         CATransform3D t = self.endAnimation;
+                         t = CATransform3DRotate(t, radianFromDegree(35.0f * self.percent), 0.0f, 1.0f, 0.0f);
+                         t = CATransform3DTranslate(t, -300 * self.percent, 0.0f, 100);
                          imageView.layer.transform = t;
                          imageView.layer.opacity = 1;
 
-                         self.menu.alpha = 0;
-                         self.menu.transform = CGAffineTransformMakeTranslation(-20, 0);
+                         self.menu.alpha = 1 * (1 - self.percent);
+                         self.menu.transform = CGAffineTransformMakeTranslation(-20 * self.percent, 0);
                      }
                      completion:^(BOOL finished) {
-                         [imageView removeFromSuperview];
-                         [self.currentViewController.view setHidden:NO];
+//                         [imageView removeFromSuperview];
+//                         [self.currentViewController.view setHidden:NO];
                      }];
+    if (self.percent >= 1.0) {
+        self.percent = 0.0f;
+        [imageView removeFromSuperview];
+        [self.currentViewController.view setHidden:NO];
+        return;
+    }
 }
 
 //Create a view with a black background
