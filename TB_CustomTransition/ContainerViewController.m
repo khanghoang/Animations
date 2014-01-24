@@ -31,6 +31,7 @@ UITableViewDelegate
 
 @property (assign, nonatomic) CGFloat percent;
 @property (assign, nonatomic) CATransform3D endAnimation;
+@property (assign, nonatomic) CATransform3D startdAnimation;
 
 @end
 
@@ -76,6 +77,10 @@ UITableViewDelegate
     [currentView addGestureRecognizer:tap];
     currentView.userInteractionEnabled = YES;
 
+    UIPanGestureRecognizer *panGuesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanGuesture:)];
+    panGuesture.delegate = self;
+    [self.view addGestureRecognizer:panGuesture];
+
     //4b. Build a view with black bg and attach here the just taken screenshot
     [self.view addSubview:currentView];
 
@@ -91,8 +96,6 @@ UITableViewDelegate
     //6. Add the new view to the detail view
     [self.detailView addSubview:viewController.view];
 
-    CGFloat percent = 0.8;
-
 #pragma mark - Far away
     [UIView animateWithDuration:.6
      
@@ -100,12 +103,17 @@ UITableViewDelegate
         CATransform3D t = CATransform3DIdentity;
         t.m34 = 1.0/ -250;
         t = CATransform3DRotate(t, radianFromDegree(-35.0f), 0.0f, 1.0f, 0.0f);
-        t = CATransform3DTranslate(t, viewController.view.frame.size.width * 0.7f * percent, 0.0f, -250.0 * percent);
+        t = CATransform3DTranslate(t, viewController.view.frame.size.width * 0.7f , 0.0f, -250.0);
         currentView.layer.transform = t;
         currentView.layer.opacity = 1;
         self.menu.alpha = 1;
         self.menu.transform = CGAffineTransformMakeTranslation(20, 0);
         self.endAnimation = t;
+
+        CATransform3D tstart = CATransform3DIdentity;
+        tstart = CATransform3DRotate(tstart, radianFromDegree(0.0f), 0.0f, 1.0f, 0.0f);
+        tstart = CATransform3DTranslate(tstart, 0, 0.0f, 0);
+        self.startdAnimation = self.endAnimation;
     }
     completion:^(BOOL finished) {
     }];
@@ -113,11 +121,6 @@ UITableViewDelegate
 
 - (IBAction)taptaptap:(UITapGestureRecognizer *)recognizer
 {
-    self.percent += 0.25;
-    if (self.percent > 1.0f) {
-        self.percent = 1.0f;
-    }
-
     JDFlipImageView *imageView = (JDFlipImageView *)recognizer.view;
 
     imageView.layer.shouldRasterize = YES;
@@ -126,25 +129,19 @@ UITableViewDelegate
     [UIView animateWithDuration:.6
 
                      animations:^{
-                         CATransform3D t = self.endAnimation;
-                         t = CATransform3DRotate(t, radianFromDegree(35.0f * self.percent), 0.0f, 1.0f, 0.0f);
-                         t = CATransform3DTranslate(t, -300 * self.percent, 0.0f, 100);
+                         CATransform3D t = CATransform3DIdentity;
+                         t = CATransform3DRotate(t, radianFromDegree(0.0f), 0.0f, 1.0f, 0.0f);
+                         t = CATransform3DTranslate(t, 0, 0.0f, 0);
                          imageView.layer.transform = t;
                          imageView.layer.opacity = 1;
 
-                         self.menu.alpha = 1 * (1 - self.percent);
-                         self.menu.transform = CGAffineTransformMakeTranslation(-20 * self.percent, 0);
+                         self.menu.alpha = 0;
+                         self.menu.transform = CGAffineTransformMakeTranslation(-20, 0);
                      }
                      completion:^(BOOL finished) {
-//                         [imageView removeFromSuperview];
-//                         [self.currentViewController.view setHidden:NO];
+                         [imageView removeFromSuperview];
+                         [self.currentViewController.view setHidden:NO];
                      }];
-    if (self.percent >= 1.0) {
-        self.percent = 0.0f;
-        [imageView removeFromSuperview];
-        [self.currentViewController.view setHidden:NO];
-        return;
-    }
 }
 
 //Create a view with a black background
@@ -191,6 +188,75 @@ UITableViewDelegate
     JDFlipImageView *screnshot = [[JDFlipImageView alloc] initWithImage:image];
     
     return screnshot;
+}
+
+- (IBAction)onPanGuesture:(UIPanGestureRecognizer *)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        self.beginPoint = [recognizer translationInView:self.view];
+    }
+
+    if (recognizer.state == UIGestureRecognizerStateChanged) {
+        self.endPoint = [recognizer translationInView:self.view];
+        CGFloat percent = self.endPoint.x - self.beginPoint.x;
+        self.percent += percent / 1000;
+        [self animationViewControllerWithPercent];
+    }
+}
+
+- (void)animationViewControllerWithPercent
+{
+    if (self.percent >= 1)
+        self.percent = 1;
+
+    if (self.percent < 0)
+        self.percent = 0;
+
+    JDFlipImageView *imageView = (JDFlipImageView *)self.currentView;
+
+    NSLog(@"Percent = %f", self.percent);
+
+    imageView.layer.shouldRasterize = YES;
+    [[imageView superview] bringSubviewToFront:imageView];
+
+    [UIView animateWithDuration:0.1
+
+                     animations:^{
+
+                         CATransform3D t = self.endAnimation;
+                         t = CATransform3DRotate(t, radianFromDegree(35.0f * self.percent), 0.0f, 1.0f, 0.0f);
+                         t = CATransform3DTranslate(t, -300 * self.percent, 0.0f, 100);
+                         imageView.layer.transform = t;
+                         imageView.layer.opacity = 1;
+
+//                         self.menu.alpha = 1 * (1 - self.percent);
+//                         self.menu.transform = CGAffineTransformMakeTranslation(-20 * self.percent, 0);
+//
+//                         CATransform3D t = CATransform3DIdentity;
+//                         t = CATransform3DRotate(t, radianFromDegree(-10.0f), 0.0f, 1.0f,0.0f);
+////                         t = CATransform3DTranslate(t, 0, 0.0f, 0);
+//                         t = CATransform3DTranslate(t, -300 * - self.percent, 0.0f, 100 * - self.percent);
+//                         imageView.layer.transform = t;
+//                         imageView.layer.opacity = 1;
+
+//                         CATransform3D t = self.startdAnimation;
+//                         t = CATransform3DTranslate(t, -300 * self.percent, 0.0f, 100 * (1 - self.percent));
+//                         imageView.layer.transform = t;
+//                         imageView.layer.opacity = 1;
+
+                         self.menu.alpha = 1 * (1 - self.percent);
+                         self.menu.transform = CGAffineTransformMakeTranslation(-20 * self.percent, 0);
+                     }
+                     completion:^(BOOL finished) {
+                     }];
+
+    if (self.percent >= 1.0) {
+        self.percent = 0.0f;
+        [imageView removeFromSuperview];
+        [self.currentViewController.view setHidden:NO];
+        return;
+    }
+
 }
 
 #pragma mark - Convert Degrees to Radian
